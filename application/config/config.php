@@ -25,7 +25,7 @@ defined('BASEPATH') OR ext('No direct script access allowed');
 */
 $root=(isset($_SERVER['HTTPS']) ? "https://" : "http://").$_SERVER['HTTP_HOST'];
 
-$config['base_url'] = $root.'/pbrServices/';
+$config['base_url'] = $root.'/pbrservices/';
 
 /*
 |--------------------------------------------------------------------------
