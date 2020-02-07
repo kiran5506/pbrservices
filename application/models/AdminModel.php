@@ -45,7 +45,7 @@ class AdminModel extends CI_Model
 	public function check_userlogin($tableName,$whr)
 	{
 		$result = array();
-		$this->db->select('u.*, ug.name as groupName, ug.slug');
+		$this->db->select('u.*, ug.name as groupName, ug.slug, ug.permission');
 		$this->db->from($tableName);
 		$this->db->where($whr);
 		$this->db->join('user_group ug','u.group_id=ug.group_id','INNER');
@@ -83,7 +83,7 @@ class AdminModel extends CI_Model
 
 	public function geCurrencyList($tableName, $whr)
 	{
-		$this->db->select('*');
+		$this->db->select('currency_id, title, code');
 		$this->db->from($tableName);
 		$this->db->where($whr);
 		$result = $this->db->get();
@@ -113,6 +113,15 @@ class AdminModel extends CI_Model
 	public function geUnitsList($tableName, $whr)
 	{
 		$this->db->select('unit_id, unit_name, code_name');
+		$this->db->from($tableName);
+		$this->db->where($whr);
+		$result = $this->db->get();
+		return $result;
+	}
+
+	public function getGroupPermissions($tableName, $whr)
+	{
+		$this->db->select('group_id, permission');
 		$this->db->from($tableName);
 		$this->db->where($whr);
 		$result = $this->db->get();

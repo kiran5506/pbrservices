@@ -147,11 +147,18 @@ class Admin extends REST_Controller {
 		$method = $_SERVER['REQUEST_METHOD'];
  		$res = $this->mainFunction($method);
      	if($res == 1){
-			if(!$this->post('user_id')){
+			if(!$this->post('user_id') &&  !$this->post('type')){
 				$this->response(['status'=> 404,'message' =>"Some Perameters Are Missing!"]);
 			}else{
-				//get Store list based on Entity user
-				$result = $this->am->geStoreDetails("stores", ['user_id' => $this->post('user_id')])->result_array();
+				$type = $this->post('type');
+				if($type == 1){
+					//get Store list based on Entity user
+					$result = $this->am->geStoreDetails("stores", ['user_id' => $this->post('user_id')])->result_array();
+				}else if($type == 2){
+					$result = $this->am->geStoreDetails("stores", ['store_id' => $this->post('store_id'), ])->row_array();
+				}else{
+					$this->response(['status' => 209,'message' =>'Type Should be 1 and 2 only.']);
+				}
 				$this->response(['status'=> 200,'message' =>"Stores List",'result' => $result]);
 			}
 		}else{
@@ -162,6 +169,7 @@ class Admin extends REST_Controller {
 	//create Store
 	public function insertStore_post()
 	{
+
 		$method = $_SERVER['REQUEST_METHOD'];
  		$res = $this->mainFunction($method);
      	if($res == 1){
@@ -202,8 +210,13 @@ class Admin extends REST_Controller {
 					'created_at' => $this->date
 				];
 
+				
+
 				$inserid = $this->am->insertData("stores", $store);
-				if($inserid){
+				/*echo "<pre>";
+				print_r($inserid);
+				exit;*/
+				if($inserid > 0){
 					$this->response(['status'=> 200,'message' =>"Store Created Successfully.",'result' => $inserid]);
 				}else{
 					$this->response(['status'=> 209,'message' =>"Oops! Somthing went wrong."]);
@@ -297,6 +310,22 @@ class Admin extends REST_Controller {
 			}else{
 				$this->response(['status' => 401,'message' =>'Unauthorized.']);
 			}
+		}
+	}
+
+	public function getPermissions_post()
+	{
+		$method = $_SERVER['REQUEST_METHOD'];
+ 		$res = $this->mainFunction($method);
+     	if($res == 1){
+			if(!$this->post('group_id')){
+				$this->response(['status'=> 404,'message' =>"Some Perameters Are Missing!"]);
+			}else{
+				$permission = $this->am->getGroupPermissions('user_group', ['group_id' => $this->post('group_id')])->row_array();
+				$this->response(['status'=> 200,'message' =>"Permissions",'result' => $permission]);
+			}
+		}else{
+			$this->response(['status' => 401,'message' =>'Unauthorized.']);
 		}
 	}
 }
